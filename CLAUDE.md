@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-React Testing Library の `act` エラーと `waitFor` の内部実装をテストコードで再現・検証するプロジェクト。
+React Testing Library の `act` エラーと `waitFor` の動作をテストコードで確認するプロジェクト。
 
 ## Commands
 

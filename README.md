@@ -1,6 +1,6 @@
 # understand-react-act
 
-React Testing Library の `act` エラーと `waitFor` の内部実装を、テストコードで検証するプロジェクト。
+React Testing Library の `act` エラーと `waitFor` の動作を、テストコードで確認するプロジェクト。
 
 ## 検証項目
 

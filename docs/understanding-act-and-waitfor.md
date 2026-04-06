@@ -1,4 +1,4 @@
-# React Testing Library の `act` 警告と `waitFor` の内部実装を理解する
+# React Testing Library の `act` エラーと `waitFor` の動作を理解する
 
 > このドキュメントは AI（Claude）を使用して作成されています。
 
