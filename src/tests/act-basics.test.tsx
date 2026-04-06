@@ -1,13 +1,17 @@
-import { describe, test, expect, spyOn, beforeEach, afterEach } from "bun:test";
+import { describe, test, expect, spyOn, beforeEach, afterEach, type Mock } from "bun:test";
 import React, { useState, useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import { act } from "react";
 
+let errorSpy: Mock<typeof console.error>;
+
 beforeEach(() => {
   globalThis.IS_REACT_ACT_ENVIRONMENT = true;
+  errorSpy = spyOn(console, "error").mockImplementation(() => {});
 });
 
 afterEach(() => {
+  errorSpy.mockRestore();
   document.body.innerHTML = "";
   globalThis.IS_REACT_ACT_ENVIRONMENT = true;
 });
@@ -41,7 +45,7 @@ describe("1. actの基本動作", () => {
 
 describe("2. IS_REACT_ACT_ENVIRONMENT と警告", () => {
   test("フラグがtrueのとき、act外のsetStateでconsole.errorが呼ばれる", () => {
-    const errorSpy = spyOn(console, "error").mockImplementation(() => {});
+
     let triggerUpdate: () => void;
 
     function Component() {
@@ -68,11 +72,10 @@ describe("2. IS_REACT_ACT_ENVIRONMENT と警告", () => {
     );
     expect(actWarning).toBeDefined();
 
-    errorSpy.mockRestore();
   });
 
   test("フラグがfalseのとき、act外のsetStateでact警告は出ない", () => {
-    const errorSpy = spyOn(console, "error").mockImplementation(() => {});
+
     let triggerUpdate: () => void;
 
     function Component() {
@@ -98,13 +101,12 @@ describe("2. IS_REACT_ACT_ENVIRONMENT と警告", () => {
     );
     expect(actWarning).toBeUndefined();
 
-    errorSpy.mockRestore();
   });
 });
 
 describe("2a. useEffectとact警告 — useEffect自体ではなく中のsetStateが警告の原因", () => {
   test("act外のrender → useEffect内のsetStateがact外扱いになり警告が出る", async () => {
-    const errorSpy = spyOn(console, "error").mockImplementation(() => {});
+
 
     function EffectComponent() {
       const [value, setValue] = useState("initial");
@@ -131,11 +133,10 @@ describe("2a. useEffectとact警告 — useEffect自体ではなく中のsetStat
     );
     expect(actWarning).toBeDefined();
 
-    errorSpy.mockRestore();
   });
 
   test("act内のrender → useEffect内のsetStateもact内で処理され警告は出ない", () => {
-    const errorSpy = spyOn(console, "error").mockImplementation(() => {});
+
 
     function EffectComponent() {
       const [value, setValue] = useState("initial");
@@ -163,13 +164,12 @@ describe("2a. useEffectとact警告 — useEffect自体ではなく中のsetStat
     );
     expect(actWarning).toBeUndefined();
 
-    errorSpy.mockRestore();
   });
 });
 
 describe("3. async actの限界", () => {
   test("コールバックのPromiseチェーンに繋がっていない非同期処理は追跡できない", async () => {
-    const errorSpy = spyOn(console, "error").mockImplementation(() => {});
+
 
     let resolveFetch: (value: string) => void;
     const fetchPromise = new Promise<string>((resolve) => {
@@ -211,6 +211,5 @@ describe("3. async actの限界", () => {
     );
     expect(actWarning).toBeDefined();
 
-    errorSpy.mockRestore();
   });
 });

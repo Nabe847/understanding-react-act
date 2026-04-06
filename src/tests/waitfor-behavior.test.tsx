@@ -1,10 +1,17 @@
-import { describe, test, expect, spyOn, afterEach } from "bun:test";
+import { describe, test, expect, spyOn, beforeEach, afterEach, type Mock } from "bun:test";
 import React, { useState, useEffect } from "react";
 import { render, screen, waitFor } from "@testing-library/react";
 import { SWRConfig, mutate } from "swr";
 import useSWR from "swr";
 
+let errorSpy: Mock<typeof console.error>;
+
+beforeEach(() => {
+  errorSpy = spyOn(console, "error").mockImplementation(() => {});
+});
+
 afterEach(() => {
+  errorSpy.mockRestore();
   document.body.innerHTML = "";
   globalThis.IS_REACT_ACT_ENVIRONMENT = true;
 });
@@ -35,7 +42,6 @@ describe("4. waitForのリトライ動作", () => {
 
 describe("5. RTL waitForがact警告を出さないこと", () => {
   test("waitFor中のsetStateでact警告が出ない", async () => {
-    const errorSpy = spyOn(console, "error").mockImplementation(() => {});
 
     let resolveData: (value: string) => void;
     const dataPromise = new Promise<string>((resolve) => {
@@ -67,13 +73,11 @@ describe("5. RTL waitForがact警告を出さないこと", () => {
     );
     expect(actWarning).toBeUndefined();
 
-    errorSpy.mockRestore();
   });
 });
 
 describe("6. waitFor後にact警告が出るケース", () => {
   test("waitFor完了後に発火するsetStateではact警告が出る", async () => {
-    const errorSpy = spyOn(console, "error").mockImplementation(() => {});
 
     let resolveFirst: () => void;
     let resolveSecond: () => void;
@@ -119,11 +123,9 @@ describe("6. waitFor後にact警告が出るケース", () => {
     );
     expect(actWarning).toBeDefined();
 
-    errorSpy.mockRestore();
   });
 
   test("SWRのrevalidationがwaitFor後にsetStateを呼ぶと警告が出る", async () => {
-    const errorSpy = spyOn(console, "error").mockImplementation(() => {});
 
     let fetchCount = 0;
     const fetcher = () => {
@@ -166,6 +168,5 @@ describe("6. waitFor後にact警告が出るケース", () => {
     );
     expect(actWarning).toBeDefined();
 
-    errorSpy.mockRestore();
   });
 });
