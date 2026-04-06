@@ -26,11 +26,11 @@ globalThis.IS_REACT_ACT_ENVIRONMENT = true;
 
 この値が `true` の環境で `act` スコープ外の `setState` が呼ばれると `console.error` が出る。RTL を使っている場合はこのフラグが自動的に `true` に設定される。
 
-**警告は `setState` がスケジュールされるタイミングで発生する。** 溜まった状態更新が実際にDOMへ反映されるタイミングではない。
+**警告は `setState` を呼んだタイミングで発生する。** 状態更新が実際にDOMへ反映されるタイミングではない。
 
 ## `async act` の限界
 
-`async act` はコールバックが返す Promise を await し、その解決に伴う状態更新もDOMへ反映する。ただし **追跡できるのはコールバックの Promise チェーンに直接繋がっている非同期処理だけ** だ。
+`async act` はコールバックが返す Promise を await し、その解決に伴う状態更新もDOMへ反映する。ただし **追跡できるのはコールバックの Promise チェーンに直接繋がっている非同期処理のみ**。
 
 ```tsx
 await act(async () => {
