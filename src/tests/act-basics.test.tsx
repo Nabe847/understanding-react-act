@@ -156,7 +156,7 @@ describe("2a. useEffectとactエラー — useEffect自体ではなく中のsetS
       root.render(<EffectComponent />);
     });
 
-    // actがuseEffectもフラッシュするのでエラーは出ない
+    // actがuseEffectも実行するのでエラーは出ない
     expect(container.textContent).toBe("updated");
 
     const actError = errorSpy.mock.calls.find((call) =>

@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-React Testing Library の `act` 警告と `waitFor` の内部実装を検証するプロジェクト。技術記事の主張をテストコードで再現・検証する。
+React Testing Library の `act` エラーと `waitFor` の内部実装をテストコードで再現・検証するプロジェクト。
 
 ## Commands
 
@@ -17,6 +17,12 @@ bun run typecheck                     # 型チェック
 ## Structure
 
 - `docs/understanding-act-and-waitfor.md` — 検証対象の技術記事
-- `src/tests/` — 記事の各主張に対応するテストファイル
-- `src/global.d.ts` — `IS_REACT_ACT_ENVIRONMENT` 等のグローバル型定義
+- `src/tests/act-basics.test.tsx` — actの基本動作、IS_REACT_ACT_ENVIRONMENT、async actの限界
+- `src/tests/waitfor-behavior.test.tsx` — waitForのリトライ、asyncWrapperによるエラー無効化、waitFor後のエラー
+- `src/global.d.ts` — `IS_REACT_ACT_ENVIRONMENT` のグローバル型定義
 - `bunfig.toml` — テスト時に `src/tests/setup.ts`（happy-dom登録）をpreload
+
+## Testing conventions
+
+- `console.error` の spy は各ファイルのトップレベル `beforeEach`/`afterEach` で管理
+- actエラーの検出は `errorSpy.mock.calls` から `"act("` を含む呼び出しを検索

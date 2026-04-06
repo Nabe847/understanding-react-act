@@ -26,11 +26,11 @@ globalThis.IS_REACT_ACT_ENVIRONMENT = true;
 
 この値が `true` の環境で `act` スコープ外の `setState` が呼ばれると `console.error` が出る。RTL を使っている場合はこのフラグが自動的に `true` に設定される。
 
-**警告は `setState` がスケジュールされるタイミングで発生する。** フラッシュのタイミングではない。
+**警告は `setState` がスケジュールされるタイミングで発生する。** 溜まった状態更新が実際にDOMへ反映されるタイミングではない。
 
 ## `async act` の限界
 
-`async act` はコールバックが返す Promise を await し、その解決に伴う状態更新もフラッシュする。ただし **追跡できるのはコールバックの Promise チェーンに直接繋がっている非同期処理だけ** だ。
+`async act` はコールバックが返す Promise を await し、その解決に伴う状態更新もDOMへ反映する。ただし **追跡できるのはコールバックの Promise チェーンに直接繋がっている非同期処理だけ** だ。
 
 ```tsx
 await act(async () => {
@@ -92,7 +92,7 @@ function checkCallback() {
 
 ## RTL の `asyncWrapper` — act 警告を回避する仕組み
 
-ここが核心だ。RTL は `waitFor` を `asyncWrapper` 経由で実行する。実装は [react-testing-library の `pure.js`](https://github.com/testing-library/react-testing-library/blob/main/src/pure.js) にある。
+RTL は `waitFor` を `asyncWrapper` 経由で実行する。実装は [react-testing-library の `pure.js`](https://github.com/testing-library/react-testing-library/blob/main/src/pure.js) にある。
 
 ```js
 asyncWrapper: async cb => {
@@ -129,7 +129,7 @@ asyncWrapper: async cb => {
 
 ## それでも act 警告が出るケース
 
-`waitFor` の Promise が resolve して `IS_REACT_ACT_ENVIRONMENT` が `true` に戻った**後**に、まだ未完了の非同期処理が `setState` を呼ぶ場合は警告が出る。
+`waitFor` の Promise が resolve して `IS_REACT_ACT_ENVIRONMENT` が `true` に戻った**後**に、未完了の非同期処理が `setState` を呼ぶ場合は警告が出る。
 
 典型例:
 
